@@ -11,7 +11,7 @@ This repository is the minimal code release for our GENCO Challenge entry. It re
 
 Each actor has to estimate what the grid will do in many uncertain scenarios before a deadline. We compare exact AC-OPF, DC-OPF, GENCO (the grid foundation model of [gridfm](https://huggingface.co/gridfm)), and multi-fidelity combinations of AC with a cheap model. All of them run inside the same wall-clock budget, and every decision is scored against AC-OPF.
 
-Links: [write-up](https://huggingface.co/spaces/gridfm/genco-challenge/discussions/6) · [interactive demo](https://claude.ai/artifact/CPDyJnDgaoNLra9358dLrG) · fine-tuned checkpoints and heads [LINK: HF model]
+Links: [write-up](https://huggingface.co/spaces/gridfm/genco-challenge/discussions/6) · [interactive demo](https://claude.ai/artifact/CPDyJnDgaoNLra9358dLrG) · [fine-tuned checkpoint and heads](https://huggingface.co/Violet24K/GENCO_TO_THE_MOON)
 
 ## What is in here
 
@@ -71,7 +71,13 @@ Tested on Linux with Python 3.12, one NVIDIA A100 and 16 CPU cores for the solve
        --local-dir checkpoints/genco-opf-datakit
    ```
 
-   Fine-tuning (below) writes `case118_ieee/small_ft2` next to them. To skip it, download our `small_ft2` checkpoint and the trained heads from [LINK: HF model]. Put the checkpoint under `checkpoints/genco-opf-datakit/case118_ieee/small_ft2/seed0/` and the `*.pt` heads under `work/models/`.
+   Fine-tuning (below) writes `case118_ieee/small_ft2` next to them. To skip it (and the head training), download our fine-tuned checkpoint and all trained heads from [Violet24K/GENCO_TO_THE_MOON](https://huggingface.co/Violet24K/GENCO_TO_THE_MOON):
+
+   ```bash
+   hf download Violet24K/GENCO_TO_THE_MOON --local-dir hf_moon
+   cp -r hf_moon/genco-opf-datakit/case118_ieee/small_ft2 checkpoints/genco-opf-datakit/case118_ieee/
+   mkdir -p work/models && cp hf_moon/heads/*.pt work/models/
+   ```
 
 4. **Environment variables** (optional; see `.env.example`):
    - `GENCO_WORKDIR` holds intermediate data, caches, trained heads and parquet results. The default is `./work`; put it on a fast local disk.
