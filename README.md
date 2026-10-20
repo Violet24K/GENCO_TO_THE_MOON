@@ -11,7 +11,7 @@ This repository is the minimal code release for our GENCO Challenge entry. It re
 
 Each actor has to estimate what the grid will do in many uncertain scenarios before a deadline. We compare exact AC-OPF, DC-OPF, GENCO (the grid foundation model of [gridfm](https://huggingface.co/gridfm)), and multi-fidelity combinations of AC with a cheap model. All of them run inside the same wall-clock budget, and every decision is scored against AC-OPF.
 
-Links: write-up [LINK: post] · [interactive demo](https://claude.ai/artifact/CPDyJnDgaoNLra9358dLrG) · fine-tuned checkpoints and heads [LINK: HF model]
+Links: [write-up](https://huggingface.co/spaces/gridfm/genco-challenge/discussions/6) · [interactive demo](https://claude.ai/artifact/CPDyJnDgaoNLra9358dLrG) · fine-tuned checkpoints and heads [LINK: HF model]
 
 ## What is in here
 
