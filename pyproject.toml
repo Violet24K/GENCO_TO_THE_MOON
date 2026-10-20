@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "genco_market"
+version = "0.1.0"
+description = "Electricity-market decisions under deadlines with GENCO, DC-OPF, AC-OPF and an LLM news reader"
+requires-python = ">=3.11"
+license = "Apache-2.0"
+
+[tool.setuptools.packages.find]
+include = ["genco_market*"]
+
+[tool.setuptools.package-data]
+genco_market = ["env/julia/*.jl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: needs Julia/GPU, minutes"]

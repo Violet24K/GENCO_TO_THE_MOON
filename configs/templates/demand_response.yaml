@@ -1,0 +1,18 @@
+# Slots: window, tight_pct, resp_pct, net_pct (system-wide)
+clean:
+  iso:
+    - "ISO conservation appeal for {window}: demand is forecast {tight_pct}% above normal and reserves are tight. The appeal is expected to reduce load by about {resp_pct}%, so net demand will still be roughly {net_pct}% above normal."
+    - "ISO asks consumers to conserve from {window}. Forecast demand +{tight_pct}% vs normal; expected voluntary reduction {resp_pct}%; net load about +{net_pct}%."
+hedged:
+  iso:
+    - "ISO issues a conservation appeal for {window} as demand runs well above normal; voluntary cutbacks should shave a few percent off the peak."
+    - "Tight grid conditions expected {window}; the ISO asks homes and businesses to cut use. Load is high, the appeal will only trim it."
+indirect:
+  iso:
+    - "ISO asks Texans to conserve power from {window}: set thermostats higher, avoid running large appliances."
+    - "Conservation appeal issued for {window}. The ISO thanks customers for reducing their electricity use."
+echo:
+  news:
+    - "Grid operator urges residents to save power during {window}."
+  social:
+    - "got a text to conserve power {window}, here we go again"

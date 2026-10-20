@@ -1,0 +1,17 @@
+# Slots: zone, zone_short, region, window, bus, n, lines, pct, hedge
+clean:
+  iso:
+    - "ISO security bulletin for {window}: a credible threat against the substation at bus {bus} ({zone_short}). Estimated {pct}% chance of an attack; if it happens, its {n} connected lines ({lines}) would trip together."
+    - "Security notice ({window}): {pct}% assessed risk of sabotage at the bus {bus} substation in {zone}. An attack would take out lines {lines}."
+hedged:
+  iso:
+    - "ISO raises its security posture in {zone_short} for {window} after a threat against a substation near bus {bus}; {hedge} an incident."
+    - "Heightened physical security alert for the bus {bus} substation ({zone_short}), {window}."
+echo:
+  news:
+    - "Authorities investigate threats against power facilities in {region}."
+  social:
+    - "lots of police around the substation in {zone_short}, something going on"
+contradiction:
+  social:
+    - "that substation threat was a hoax, nothing to see"

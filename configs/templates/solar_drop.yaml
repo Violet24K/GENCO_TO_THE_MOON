@@ -1,0 +1,17 @@
+# Slots: zone, zone_short, region, window, mw, mw_lo, mw_hi, cause
+clean:
+  weather:
+    - "Solar outlook for {zone}: {cause} will cut solar output from {window}, about {mw} MW below forecast (likely {mw_lo}-{mw_hi} MW), so net load rises by that amount."
+    - "Weather service: {cause} over {region} from {window}. Expect solar generation in {zone_short} roughly {mw} MW under forecast ({mw_lo}-{mw_hi} MW)."
+hedged:
+  weather:
+    - "{cause} expected over {region} from {window}; rooftop and utility solar in {zone_short} will underperform."
+    - "Hazy skies in {zone_short} from {window} because of {cause}; solar output could fall short of forecast by a couple hundred MW."
+echo:
+  news:
+    - "{cause} to dim skies over {region} from {window}."
+  social:
+    - "sky is weird and orange over {zone_short}, solar panels doing nothing"
+contradiction:
+  social:
+    - "sun's out in {zone_short}, no idea what that forecast was about"

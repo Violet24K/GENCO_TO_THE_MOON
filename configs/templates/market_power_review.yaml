@@ -1,0 +1,17 @@
+# Slots: since, cap, cap_pct
+clean:
+  iso:
+    - "Market monitor notice: effective {since}, any offer above {cap} times the unit's reference cost will be mitigated to reference cost."
+    - "Effective {since}: offers exceeding {cap}x reference cost fail the conduct test and are reset to cost at settlement."
+hedged:
+  iso:
+    - "The market monitor will apply stricter mitigation from {since}; offers well above cost (more than about {cap}x) will be reset to cost."
+indirect:
+  iso:
+    - "Regulatory update effective {since}: the conduct threshold for offer mitigation is set at {cap_pct}% above reference levels; offers failing the test are settled at reference levels."
+    - "Market monitor revises its mitigation protocol from {since}: reference-level tolerance reduced to {cap_pct}%."
+echo:
+  news:
+    - "Regulators crack down on high power plant offers starting {since}."
+  rival:
+    - "Desk chatter: monitor is clamping down on offers from {since}, careful with markups."

@@ -1,0 +1,8 @@
+# MVP scale
+grid: case118_ieee
+seed: 0
+episode: {horizon: 4, n_episodes: 3}
+agent: {markups: [1.0, 1.2, 1.5, 2.0, 2.5, 3.0], deadline_s: 20, compute_budget_s: 5}
+semantics: {level: L1, event_types: [heatwave, planned_outage, thunderstorm, gas_price], max_events: 2}
+solver_workers: 8
+oracle_scenarios: 200

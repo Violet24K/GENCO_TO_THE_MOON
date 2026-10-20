@@ -1,0 +1,59 @@
+# Shared rendering vocabulary. version bumps when wording changes.
+version: 2
+
+# Human-readable zones. Letters A-E must stay visible (the agent refers to zones by letter).
+zones:
+  A: {name: "Zone A (Coast, buses 1 to 32 area)", short: "Zone A", region: "the Coast region"}
+  B: {name: "Zone B (North Central, buses 80 to 112 area)", short: "Zone B", region: "the North Central region"}
+  C: {name: "Zone C (South Central, buses 33 to 50 area)", short: "Zone C", region: "the South Central region"}
+  D: {name: "Zone D (East, buses 51 to 67 area)", short: "Zone D", region: "the East region"}
+  E: {name: "Zone E (North, buses 68 to 81 area)", short: "Zone E", region: "the North region"}
+system_name: "the whole system (Zones A to E)"
+firm_names: {A: "Firm A", B: "Firm B", C: "Firm C", D: "Firm D", E: "Firm E"}
+
+# Windows are rendered with clock time plus the interval index, so the agent
+# can map text to rounds unambiguously.
+window_format: "{start} to {end} on {day} (intervals t={t0}-{t1})"
+window_format_single: "{start} to {end} on {day} (interval t={t0})"
+since_format: "{start} on {day} (interval t={t0})"
+
+# Sources and stylized reliabilities. Reliability scales how much numbers in
+# echoed reports are distorted: sd = (1 - reliability) * distortion_scale.
+sources:
+  iso: {label: "ISO notice", reliability: 0.98}
+  weather: {label: "Weather service", reliability: 0.90}  # forecast error also grows with lead time
+  news: {label: "News", reliability: 0.75}
+  social: {label: "Social media / forum", reliability: 0.40}
+  rival: {label: "Trader chat", reliability: 0.30}
+distortion_scale: 1.0
+
+# Forecast error of the weather service vs lead time (intervals ahead).
+forecast_temp_sd_c: {base: 0.5, per_lead: 0.8}
+forecast_load_halfwidth_pct: {base: 2, per_lead: 1.5}
+
+# Hedged probability phrases. Each phrase maps to a hidden probability range
+# [lo, hi); the renderer picks a phrase whose range contains the stated probability.
+prob_hedges:
+  - {range: [0.00, 0.25], phrases: ["a slight chance of", "an outside chance of", "isolated"]}
+  - {range: [0.25, 0.45], phrases: ["a chance of", "scattered", "some potential for"]}
+  - {range: [0.45, 0.60], phrases: ["roughly even odds of", "a fair chance of"]}
+  - {range: [0.60, 0.80], phrases: ["a good chance of", "probable", "likely"]}
+  - {range: [0.80, 0.95], phrases: ["a high chance of", "widespread", "very likely"]}
+  - {range: [0.95, 1.01], phrases: ["near-certain", "all but certain"]}
+# Confidence verbs for quantities; range = forecaster confidence in the stated band.
+conf_hedges:   # modal verbs only, so they fit singular and plural subjects
+  - {range: [0.00, 0.50], phrases: ["could", "might"]}
+  - {range: [0.50, 0.80], phrases: ["will likely", "should"]}
+  - {range: [0.80, 1.01], phrases: ["will", "will almost certainly"]}
+# Forecaster confidence by lead time (intervals ahead); the last entry repeats.
+conf_by_lead: [0.9, 0.75, 0.6, 0.5]
+
+# L2 extras
+echo_prob: 0.6         # chance each real event is echoed by a news/social item
+rumor_prob: 0.5        # chance of one false rumor per episode
+n_distractors_default: 2
+
+# L3 extras
+rumor_prob_l3: 0.8
+denial_prob: 0.8       # chance a rumor is later denied by an official source
+contradiction_prob: 0.4  # chance an event gets a false, unreliable contradicting item

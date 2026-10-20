@@ -1,0 +1,39 @@
+# Slots: zone, zone_short, region, window, temp_lo, anom, load_lo, load_hi, load_mid, conf, gas_pct, gas_trip_pct,
+# gas_price_pct, unit_pct
+clean:
+  weather:
+    - "Winter storm warning for {zone}: lows near {temp_lo} C from {window}, about {anom} C below normal. Heating demand is forecast {load_lo}-{load_hi}% above normal."
+    - "Arctic air mass: {zone} will see temperatures around {temp_lo} C ({anom} C below seasonal normal) from {window}. Expected load uplift: {load_lo}-{load_hi}%."
+hedged:
+  weather:
+    - "Bitter cold moving into {zone} from {window}; lows {conf} reach about {temp_lo} C. Heating load {conf} run {load_lo}-{load_hi}% above normal."
+    - "Hard freeze for {zone_short} from {window}: temperatures {conf} drop near {temp_lo} C, well below normal. Demand {conf} climb {load_lo}-{load_hi}%."
+echo:
+  news:
+    - "Residents of {region} told to prepare for a hard freeze from {window}; space heaters expected to push power use up around {load_mid}%."
+    - "Schools in {region} weigh closures as temperatures plunge toward {temp_lo} C from {window}."
+  social:
+    - "pipes are going to freeze lol, {temp_lo} C forecast for {region}. heaters on full blast"
+    - "is the grid going to hold up?? another big freeze for {zone_short} from {window}"
+update:
+  revised:
+    weather:
+      - "Forecast update for {zone}: the cold is deeper than expected, lows now near {temp_lo} C ({anom} C below normal) for {window}; demand {load_lo}-{load_hi}% above normal."
+      - "Upgraded winter storm warning for {zone_short}, {window}: temperatures near {temp_lo} C, heating load {load_lo}-{load_hi}% over normal."
+contradiction:
+  social:
+    - "the freeze for {zone_short} is way overhyped, it'll barely get below zero"
+# ISO / pipeline notice on gas supply (correlated gas-unit trips) and fuel prices
+gas_notice:
+  clean:
+    iso:
+      - "ISO fuel supply advisory for {window}: pipeline operators report a {gas_pct}% chance of gas curtailments to power plants. If curtailments occur, about {gas_trip_pct}% of gas-fired units are expected to trip together. Gas hub prices are up about {gas_price_pct}%. Freeze-related forced outages run about {unit_pct}% per unit per hour."
+      - "ISO cold weather notice ({window}): gas supply to generators is at risk ({gas_pct}% chance of curtailment; if it happens, roughly {gas_trip_pct}% of gas units go offline at once). Spot gas is up {gas_price_pct}%. Units also face about {unit_pct}% per hour freeze-trip risk."
+  hedged:
+    iso:
+      - "ISO fuel advisory for {window}: some risk that pipelines cut gas deliveries to power plants; if so, many gas units could trip at the same time. Gas prices are sharply higher."
+      - "ISO cold weather alert ({window}): generators should expect gas supply interruptions and freeze-related outages. Fuel costs have jumped."
+  indirect:
+    iso:
+      - "ISO asks generators to report fuel inventories and firm gas contracts for {window}, and to winterize equipment."
+      - "Pipeline operators issue operational flow orders for {window}; the ISO requests updated fuel availability from all gas-fired resources."

@@ -1,0 +1,25 @@
+# Slots: zone, zone_short, region, window, start, pct, what, venue, crowd
+clean:   # L1: effect stated explicitly
+  news:
+    - "{what} at {venue} in {zone} from {window}; the ISO expects {zone_short} demand about {pct}% above normal during the event."
+    - "Load note: {what} in {zone} from {window}. Expected demand uplift in {zone_short}: +{pct}%."
+    - "ISO forecasters add +{pct}% to {zone_short} load from {window} for the {what} at {venue}."
+hedged:  # L2
+  news:
+    - "{what} at {venue} ({zone_short}) from {window}; analysts say local demand could tick up a few percent."
+    - "Big crowds expected for the {what} in {region} from {window}; expect somewhat higher {zone_short} load."
+    - "{what} in {zone} from {window} may lift evening demand modestly."
+indirect:  # L3: cause only, the agent must infer the load effect
+  news:
+    - "{what} tonight at {venue} in {region}: start time {start}, {crowd} fans expected and a citywide watch party planned from {window}."
+    - "Sold out: {crowd} tickets for the {what} at {venue} ({zone_short}), which runs from {window}."
+    - "City officials in {region} prepare for the {what} from {window}; bars and fan zones will stay open late."
+  social:
+    - "who's going to the {what} at {venue}?? starts {start}"
+echo:
+  social:
+    - "can't wait for the {what}, all of {region} will be watching"
+  news:
+    - "Traffic advisory around {venue} for the {what} from {window}."
+whats: ["championship final", "state basketball final", "stadium concert", "college football rivalry game"]
+venues: ["the city stadium", "the downtown arena", "the university stadium"]

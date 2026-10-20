@@ -1,0 +1,223 @@
+# Effects map: event type x severity -> PhysicalState channel deltas.
+# Stylized numbers: direction and order of magnitude are meant to be plausible,
+# not calibrated. Uncertain values are marked TODO(verify). No citations implied.
+# All deltas are relative to "normal" conditions for the interval (the ERCOT
+# baseline supplied by env/), so a world without events maps to the neutral state.
+version: 4  # v4: extension II events (cold snap, PSPS, wind, solar drop, conservation appeal, mitigation review,
+            # geomagnetic storm, cyber threat) + correlated outages (PhysicalState.common_shocks)
+
+# Global guards applied after all events are combined.
+bounds:
+  load_mult: [0.85, 1.30]       # MVP envelope for zone load multipliers
+  load_std: [0.03, 0.08]        # neutral std is 0.03
+  rate_mult: [0.80, 1.10]
+  pmax_mult: [0.85, 1.00]
+  cost_mult: [1.00, 4.00]        # v4: was [1, 2]; cold snap gas spikes (old events never exceed 1.85)
+  max_outage_branches: 4        # branches with p > 0 at any interval (so realized outages <= 4); priority planned/PSPS > storm/wind > heat.
+                                # Correlated shocks (common_shocks) are outside this budget.
+  gen_outage_prob: [0.0, 0.10]
+  system_load_std: [0.0, 0.06]
+neutral:
+  load_std: 0.03
+
+# case118 has no fuel field. Rule: firm units (pmax > 0) are classified by
+# their linear cost c1. c1 >= oil_c1 -> oil peaker (bus 12 unit, 124.6 $/MWh);
+# gas_c1 <= c1 < oil_c1 -> gas-fired; c1 < gas_c1 -> coal / base-load steam.
+# With 24.5 the split puts 11 of 19 units (incl. bus 69, 1182 MW) in "gas";
+# Strategic firm D: units at buses 54, 59, 65, 66 are gas, bus 61 (16.1 $/MWh) is coal.
+fuel_rule:
+  gas_c1: 24.5    # $/MWh TODO(verify) - stylized split, not from data
+  oil_c1: 100.0
+
+heatwave:
+  # Severity -> peak temperature anomaly (deg C above normal for the date/hour).
+  # Anomaly follows a diurnal shape peaking at 16:00: 0.6 + 0.4*cos(2*pi*(h-16)/24).
+  severity: {1: {peak_anomaly_c: 3.0}, 2: {peak_anomaly_c: 5.0}, 3: {peak_anomaly_c: 7.0}}
+  load_mult_per_c: 0.025       # cooling load: ~2-3% per deg C of anomaly on hot days. TODO(verify)
+  load_std_per_c: 0.004        # hotter days are also less predictable. TODO(verify)
+  rate_mult_per_c: -0.010      # overhead conductor / transformer ampacity falls ~0.5-1% per deg C ambient. TODO(verify)
+  pmax_mult_per_c: -0.006      # thermal units lose output with warmer cooling water / inlet air. TODO(verify)
+  scope:
+    branches: zone_branches    # internal + boundary branches of each affected zone
+    gens: zone_units           # firm units located in affected zones (all fuels)
+  system_prob: 0.25            # chance a sampled heatwave is system-wide instead of one zone
+  duration_h: [2, 6]
+  season_min_normal_high_c: 30.0  # only sampled when the normal daily high reaches this
+  # --- discrete / heavy-tailed heat risks (v3) ---
+  # Forced outages of thermal units rise in heat (cooling-water limits, inlet-air
+  # temperature, equipment stress; cf. the elevated forced outages in the ERCOT
+  # summer of 2023). Hourly trip probability per unit = rate[fuel] * anomaly(t),
+  # applied to every firm unit (pmax > 0) in the affected zones, all firms incl.
+  # the strategic one. +7 C -> ~2.8% (coal) / ~3.5% (gas) per unit per hour.
+  unit_trip_per_c: {coal: 0.004, gas: 0.005, oil: 0.005}   # TODO(verify)
+  # Heat-related line trips: hot, heavily loaded conductors sag into vegetation /
+  # clearances. The n most loaded non-bridge, non-transformer lines touching the
+  # affected zones (configs/line_loading_case118.yaml, DC |flow|/rate_a at nominal)
+  # get p = per_c * anomaly(t). Uses whatever is left of max_outage_branches
+  # after planned outages and storms.
+  line_trip:
+    n_lines: [1, 2]
+    min_loading: 0.5           # only lines at least this loaded at nominal
+    per_c: 0.008               # +7 C -> ~5.6% per line per hour. TODO(verify)
+  # Shared temperature-forecast error: one lognormal factor common to all zones
+  # (PhysicalState.system_load_std). std = per_c * anomaly(t) * lead_factor[lead]
+  # * share, share = affected zones' base load / total (1.0 when system-wide).
+  # Forecasts issued further ahead (event 'lead', intervals) are less certain.
+  system_load_std_per_c: 0.006   # +7 C system-wide -> ~4% (1 sigma) at lead 0. TODO(verify)
+  system_load_lead_factor: [1.0, 1.25, 1.5, 1.75]   # by lead; last entry repeats
+
+planned_outage:
+  # Deterministic: branch_outage_prob = 1.0 inside [start_t, end_t].
+  candidates:                  # PGLib names; weights for sampling the outaged branch
+    "65-68": 0.30              # D-E tie: strategic firm D becomes pivotal even at low load
+    "38-37": 0.20              # C-zone import transformer (row 50): C scarcity / VOLL prices; D gains power
+    "49-54": 0.15              # weakens D's position at moderate load
+    "49-66": 0.15              # one circuit of the 49-66 double line
+    "56-57": 0.10
+    "15-33": 0.10
+  duration_h: [1, 4]
+  lead_h: [1, 3]               # ISO notice published this many intervals before start (clipped at 0)
+  # Schedule revisions (sampled at every level so physics is level-independent;
+  # only L3 shows the original notice + the update). Truth = revised schedule.
+  revision: {none: 0.55, postponed: 0.15, extended: 0.15, cancelled: 0.15}
+  revision_shift_h: [1, 2]     # postponement / extension length
+
+thunderstorm:
+  # Lines touching the zone get an outage probability while the storm is active.
+  severity:
+    1: {outage_prob: 0.06, load_delta: -0.010}
+    2: {outage_prob: 0.12, load_delta: -0.020}
+    3: {outage_prob: 0.20, load_delta: -0.030}
+  # Outage probs are per interval and deliberately high so storms matter at
+  # this scale (real per-hour line trip rates are far lower). TODO(verify)
+  # load_delta: rain-cooled outflow and cloud cover cut cooling load. TODO(verify)
+  load_std_add: 0.01           # per severity level
+  n_lines: [2, 4]              # exposed lines (non-bridge, touching the zone)
+  temp_drop_c: 3.0             # weather track only
+  forecast_prob: [0.3, 0.5, 0.7, 0.9]  # stated chance; the storm occurs with exactly this probability
+  duration_h: [1, 3]
+  # Earlier forecasts scatter around the final one (text only; L3 shows the path).
+  forecast_path_sd: 0.15       # per interval of extra lead
+  forecast_path_lead: 1        # L3 starts the path this many intervals before the L1/L2 notice
+
+gas_price:
+  # Gas hub price multiplier; gas units' c1 rises by pass_through * (mult - 1).
+  severity: {1: {gas_mult: 1.20}, 2: {gas_mult: 1.50}, 3: {gas_mult: 2.00}}
+  pass_through: 0.85           # fuel share of a gas unit's marginal cost. TODO(verify)
+  # Truth is per unit (PhysicalState.gen_cost_mult) and applies to every gas
+  # unit, including the strategic firm's own (it pays for fuel too).
+  lasts_to_episode_end: true
+
+# --- indirect-load events: L3 text describes the cause, not the effect ---
+major_event:
+  # Championship final / big concert: TV viewing, venue lighting, gatherings.
+  load_delta: [0.02, 0.05]     # zone load, during the event window. TODO(verify)
+  load_std_add: 0.01
+  duration_h: [2, 3]
+  lead_h: [0, 2]
+holiday:
+  # Schools / offices closed: commercial and institutional load drops.
+  load_delta: [-0.06, -0.03]   # whole episode. TODO(verify)
+  system_prob: 0.5
+data_center:
+  # New data center campus energized: steady load at one bus, whole rest of episode.
+  # Encoded as negative renewable_mw at the bus (renewables are applied as negative load).
+  mw: [20, 50]                 # TODO(verify) - modest vs case118 bus loads
+  homes_per_mw: 800            # text only: "about the use of N homes" (~1.25 kW average per home). TODO(verify)
+
+# Zone sampling weights for zone-scoped events (strategic zone D and its import-pocket neighbour C overweighted).
+zone_weights: {A: 0.10, B: 0.10, C: 0.30, D: 0.30, E: 0.20}
+wind_zone_weights: {B: 0.5, E: 0.5}   # wind farms sit in the north / north-central zones
+
+# Stylized climatology for the hidden weather track (deg C). Normal temperature
+# = annual + seasonal*sin(2*pi*(doy - 110)/365) + diurnal*cos(2*pi*(hour - 16)/24) + zone offset.
+# Only anomalies drive PhysicalState; absolute temperatures are for text.
+weather:
+  annual_mean_c: 20.0
+  seasonal_amp_c: 10.0
+  diurnal_amp_c: 6.0
+  zone_offset_c: {A: -1.0, B: 0.0, C: 1.0, D: 0.0, E: 0.5}
+  noise_sd_c: 0.5               # AR(1) weather noise (text only, no load effect)
+  noise_ar: 0.7
+
+# ===================== extension II =====================
+# All numbers stylized: direction and order of magnitude, not calibrated. TODO(verify).
+
+cold_snap:
+  # Winter storm (cf. ERCOT, Feb 2021). Severity -> temperature anomaly below normal (deg C), constant over the window.
+  severity:
+    1: {anomaly_c: 8.0, gas_shock_prob: 0.15, gas_trip_given_shock: 0.25, gas_mult: 1.5}
+    2: {anomaly_c: 12.0, gas_shock_prob: 0.35, gas_trip_given_shock: 0.40, gas_mult: 2.5}
+    3: {anomaly_c: 16.0, gas_shock_prob: 0.60, gas_trip_given_shock: 0.55, gas_mult: 4.0}
+  load_mult_per_c: 0.012       # electric heating load per deg C below normal. TODO(verify)
+  load_std_per_c: 0.003
+  system_load_std_per_c: 0.003 # shared temperature-forecast error
+  unit_trip_per_c: 0.002       # independent freeze-related trips, every firm unit in the cold zones (+16 C -> 3.2%/h)
+  pass_through: 0.85           # gas units' c1 rises by pass_through * (gas_mult - 1), all gas units incl. D's
+  system_prob: 0.7             # cold snaps are usually system-wide
+  duration_h: [3, 8]
+  lead_h: [1, 3]
+  season_max_normal_high_c: 22.0   # only sampled when the normal daily high is at most this (winter half)
+  l3_initial_anomaly_c: 4.0        # L3: the first forecast understates the cold by this much, then is upgraded
+
+wildfire_psps:
+  # Public-safety power shutoff: named overhead lines de-energized for the window (deterministic, p = 1).
+  n_lines: [2, 3]
+  duration_h: [2, 6]
+  lead_h: [1, 3]
+  revision: {none: 0.60, cancelled: 0.15, expanded: 0.15, extended: 0.10}
+  revision_shift_h: [1, 2]
+
+high_wind:
+  # Wind output above the day-ahead forecast in a wind zone: injected at the zone's load buses in proportion
+  # to their base load (net-load reduction), with forecast error. Strong gusts also threaten lines.
+  severity:
+    1: {extra_mw: [100, 200], line_trip_prob: 0.0}
+    2: {extra_mw: [200, 350], line_trip_prob: 0.03}
+    3: {extra_mw: [350, 500], line_trip_prob: 0.08}
+  std_frac: 0.35               # 1-sigma forecast error as a share of the extra MW
+  n_lines: [1, 2]              # exposed lines (sev >= 2)
+  duration_h: [2, 6]
+  lead_h: [0, 2]
+
+solar_drop:
+  # Dust storm / thick cloud deck / eclipse: solar output below forecast, i.e. extra net load in a zone.
+  severity:
+    1: {lost_mw: [60, 120]}
+    2: {lost_mw: [120, 220]}
+    3: {lost_mw: [220, 350]}
+  std_frac: 0.30
+  duration_h: [2, 4]
+  lead_h: [0, 2]
+  causes: ["a dust storm", "a thick cloud deck", "a partial solar eclipse"]
+
+demand_response:
+  # Conservation appeal: issued because conditions are tight (high demand), and the appeal itself trims load
+  # by an uncertain amount. Net effect on load is still UP. System-wide.
+  tight_load_delta: [0.05, 0.09]
+  response_delta: [-0.04, -0.02]
+  load_std_add: 0.015
+  duration_h: [2, 4]
+  lead_h: [0, 2]
+
+market_power_review:
+  # Market monitor tightens mitigation: offers above cap x reference cost are reset to cost (MarketRules.mitigation_markup_cap).
+  severity: {1: {cap: 2.5}, 2: {cap: 2.0}, 3: {cap: 1.5}}
+  lead_h: [0, 2]
+  lasts_to_episode_end: true
+
+geomagnetic_storm:
+  # Space weather (NOAA G3/G4/G5): correlated transformer trips (and a few generator step-up transformers).
+  severity:
+    1: {scale: G3, shock_prob: 0.25, tx_trip_given_shock: 0.08, gen_trip_given_shock: 0.03}
+    2: {scale: G4, shock_prob: 0.45, tx_trip_given_shock: 0.15, gen_trip_given_shock: 0.06}
+    3: {scale: G5, shock_prob: 0.65, tx_trip_given_shock: 0.25, gen_trip_given_shock: 0.10}
+  duration_h: [2, 6]
+  lead_h: [1, 3]
+
+cyber_physical:
+  # Credible threat against a substation: if the attack happens, the lines at one bus trip together.
+  severity: {1: {attack_prob: 0.05}, 2: {attack_prob: 0.15}, 3: {attack_prob: 0.30}}
+  line_trip_given_attack: 0.9
+  duration_h: [2, 6]
+  lead_h: [0, 2]

@@ -1,0 +1,29 @@
+# False rumors (L2+, is_true=False). Slots: branch, kind, zone, zone_short, region, temp_hi, firm
+false_outage:
+  social:
+    - "hearing the {branch} {kind} tripped this morning?? can anyone confirm"
+    - "rumor on the desk: {branch} {kind} is down, {zone_short} imports will be tight"
+  rival:
+    - "Chatter: {kind} {branch} reportedly out of service, unconfirmed."
+false_heat:
+  social:
+    - "someone said {region} is going to hit {temp_hi} C this afternoon, crazy"
+    - "heat wave coming for {zone} apparently, demand +25% or so"
+rival_bidding:
+  rival:
+    - "Chatter that {firm} plans to withhold capacity this afternoon."
+    - "Word is {firm} is going to bid its units at triple cost today."
+  social:
+    - "{firm} traders bragging they'll set the price today"
+
+denial:   # L3: an official source denies an earlier rumor (supersedes it)
+  false_outage:
+    iso:
+      - "ISO clarification: {kind} {branch} is in service; reports of a trip are incorrect."
+      - "ISO: no outage on {kind} {branch}. All {zone_short} import paths are in service."
+  false_heat:
+    weather:
+      - "Weather service: no heat advisory for {zone}; temperatures stay near normal."
+  rival_bidding:
+    news:
+      - "{firm} denies reports it will withhold capacity, says all units are offered as usual."

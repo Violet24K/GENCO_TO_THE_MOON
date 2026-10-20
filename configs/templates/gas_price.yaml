@@ -1,0 +1,24 @@
+# Slots: pct (gas price rise %), window, hub
+clean:
+  news:
+    - "Natural gas prices at the regional hub jumped {pct}% for delivery from {since}, raising costs for gas-fired generators."
+    - "Fuel markets: regional gas trades {pct}% above yesterday's level for deliveries from {since}; gas-fired units' marginal costs rise accordingly."
+    - "Gas price spike: the {hub} index is up {pct}% (effective {since}) after pipeline constraints."
+hedged:
+  news:
+    - "Gas prices surge on pipeline constraints; traders cite gains of around {pct}% at {hub} for deliveries from {since}."
+    - "Regional gas costs climb sharply (roughly +{pct}%) from {since}; gas-fired generators' offers likely higher."
+    - "Pipeline maintenance pushes {hub} gas up an estimated {pct}% from {since}."
+echo:
+  news:
+    - "Energy desk: gas-fired generation costs rising this week on tight pipeline supply."
+  social:
+    - "gas at {hub} going vertical, +{pct}% lol"
+    - "fuel costs ripping today, gas plants will price up"
+hubs: ["the regional hub", "the Ship Channel-style hub", "the intrastate hub"]
+
+contradiction:
+  social:
+    - "gas prices already back to normal, the spike was a data error"
+  rival:
+    - "Chatter: gas spike reversed this morning, nothing to see."

@@ -1,0 +1,23 @@
+# Items with no grid effect (L2+). Slots: zone, region, branch, kind, bus
+irrelevant:
+  news:
+    - "Regulator schedules a public workshop on interconnection queue reform next month."
+    - "ISO reminds participants that the market portal will undergo maintenance this weekend; no effect on operations."
+    - "Utility in {region} launches a customer energy-efficiency rebate program."
+    - "Board approves annual budget for transmission planning studies."
+  social:
+    - "anyone know if the ISO is hiring market analysts?"
+    - "power bills are wild this year, nothing new"
+other_zone_no_effect:
+  news:
+    - "Brush fire near {region} contained; no transmission facilities affected."
+    - "Substation inspection at bus {bus} in {zone} completed without any outage."
+    - "Wind farm owner in {region} announces expansion plans for 2027."
+  iso:
+    - "ISO notice: telemetry upgrade at bus {bus} ({zone_short}) completed; no change to equipment status."
+stale:
+  news:
+    - "Recap: last week's thunderstorms in {zone} caused no lasting damage; all lines were restored the same evening."
+    - "Update: the {kind} {branch} maintenance that ended last month has been formally closed out."
+  iso:
+    - "Correction to an archived notice: the {kind} {branch} outage from last week ended on schedule."

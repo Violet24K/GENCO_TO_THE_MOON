@@ -1,0 +1,25 @@
+# Layer 4: ISO outage coordination. Loaded with
+# genco_market.env.outage.load_l4("l4.yaml"); the `l4:` block is ignored by Config.
+grid: case118_ieee
+seed: 0
+episode: {horizon: 8, n_episodes: 40}
+agent: {markups: [1.0], deadline_s: 30, compute_budget_s: 5}
+semantics:
+  level: L3
+  event_types: [heatwave, thunderstorm, gas_price, major_event, holiday, data_center]  # no planned_outage
+  max_events: 3
+  paraphrase: true
+solver_workers: 16
+oracle_scenarios: 300
+l4:
+  start_hours: [8, 10]       # t=0 clock hour; 8 h fit in 08:00-18:00
+  summer_prob: 0.7           # day drawn from day-of-year 150-250 (heat waves need a normal high >= 30 C)
+  summer_doy: [150, 250]
+  hazard_prob: 0.75          # force one heatwave/thunderstorm into the episode with this probability
+  heat_share: 0.6            # ... heat wave if the season allows it, else thunderstorm
+  extra_events: [0, 2]       # plus this many other event types (at least 1 if no hazard)
+  event_pool: [heatwave, thunderstorm, gas_price, major_event, holiday, data_center]
+  durations: [1, 2]
+  deferral_cost: 4000        # $; oracle defers in ~13% of episodes (sensitivity: 2k/10k/20k, results/l4_summary.md)
+  voll: 2000
+  oracle_scenarios: 300

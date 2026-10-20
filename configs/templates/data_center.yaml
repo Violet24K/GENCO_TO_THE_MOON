@@ -1,0 +1,20 @@
+# Slots: zone, zone_short, region, since, bus, mw, homes, company
+clean:
+  iso:
+    - "ISO new load notice: a {mw} MW data center at bus {bus} ({zone_short}) is energized from {since}."
+    - "Interconnection update: {company} data center load of {mw} MW connected at bus {bus} in {zone}, effective {since}."
+    - "New steady load: +{mw} MW at bus {bus} ({zone_short}) from {since} (data center commissioning)."
+hedged:
+  iso:
+    - "ISO notice: a data center at bus {bus} ({zone_short}) begins drawing power from {since}; expected load roughly {mw} MW."
+    - "Commissioning of the {company} data center at bus {bus} ({zone_short}) starts at {since}; load ramping to about {mw} MW."
+    - "{company} data center campus near bus {bus} ({zone_short}) energizes from {since}, about {mw} MW."
+indirect:
+  news:
+    - "{company} says its new AI training campus near bus {bus} ({zone_short}) went live at {since}; at full tilt it uses about as much power as {homes} homes."
+    - "Tech giant {company} switches on its {region} data center by bus {bus} at {since}; the site runs around the clock, roughly the consumption of {homes} homes."
+    - "Ribbon cutting at {company}'s server farm near bus {bus} in {zone}: operations start at {since}, drawing power equivalent to {homes} households."
+echo:
+  social:
+    - "{company} data center near bus {bus} is finally online"
+companies: ["Hyperscale Co.", "Nimbus Cloud", "Cortex AI", "BlockForge Mining"]

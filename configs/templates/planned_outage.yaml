@@ -1,0 +1,39 @@
+# Slots: kind ("line" | "transformer"), branch (PGLib "f-t"), zone, window, purpose
+clean:
+  iso:
+    - "ISO planned outage notice: {kind} {branch} ({zone_short}) will be out of service from {window} for {purpose}."
+    - "Scheduled maintenance: the {branch} {kind} is planned out of service from {window} for {purpose}."
+    - "ISO transmission outage schedule: {kind} {branch}, {zone_short}, OUT from {window}. Reason: {purpose}."
+    - "Operations notice: {kind} {branch} will be removed from service from {window} for {purpose}; return to service expected at the end of the window."
+hedged:
+  iso:
+    - "ISO planned outage notice: {kind} {branch} ({zone_short}) will be out of service from {window} for {purpose}."
+    - "Scheduled maintenance: the {branch} {kind} is planned out of service from {window} for {purpose}."
+    - "ISO transmission outage schedule: {kind} {branch}, {zone_short}, OUT from {window}. Reason: {purpose}."
+echo:
+  news:
+    - "Grid operator lists maintenance on the {branch} {kind} in {region} for {window}."
+    - "Transmission work planned in {region}: {kind} {branch} to be taken offline from {window}."
+  social:
+    - "heads up, {branch} {kind} going down for work from {window}. could get tight in {zone_short}"
+    - "saw the outage schedule, {branch} out from {window}"
+purposes: ["routine maintenance", "relay testing", "bushing replacement", "protection upgrades", "inspection"]
+
+update:   # L3: supersedes the original notice. Slots also: old_window, end
+  postponed:
+    iso:
+      - "UPDATE to the earlier notice: the {kind} {branch} outage ({old_window}) is postponed. New window: {window}."
+      - "Revised outage schedule: {kind} {branch} work moves to {window}; previously {old_window}."
+  extended:
+    iso:
+      - "UPDATE: work on {kind} {branch} is running long; the outage now runs from {window}."
+      - "Revised: {kind} {branch} return to service delayed; now out from {window}."
+  cancelled:
+    iso:
+      - "CANCELLED: the planned outage of {kind} {branch} ({old_window}) will not take place; the {kind} stays in service."
+      - "ISO withdraws the outage notice for {kind} {branch} ({old_window}); no outage."
+contradiction:   # false, unreliable, published alongside the official item
+  social:
+    - "buddy at the utility says the {branch} job got scrapped, it stays in service"
+  rival:
+    - "Desk chatter: {branch} {kind} work was called off, ignore the notice."

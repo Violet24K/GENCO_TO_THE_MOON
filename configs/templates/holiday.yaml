@@ -1,0 +1,22 @@
+# Slots: zone, zone_short, region, day, pct (positive number = % lower), why
+clean:
+  news:
+    - "{why}: schools and offices in {zone} are closed on {day}; the ISO forecasts {zone_short} demand about {pct}% below a normal weekday."
+    - "Load note for {day}: {why} in {zone}. Expected demand reduction: -{pct}%."
+    - "ISO lowers its {zone_short} load forecast by {pct}% for {day} ({why}: schools and offices closed)."
+hedged:
+  news:
+    - "{why} in {zone} on {day}; demand should run somewhat below a normal weekday."
+    - "With schools and many offices closed for {why} ({zone}, {day}), commercial load may dip a few percent."
+    - "{why}: quieter-than-usual business day expected in {region} on {day}."
+indirect:
+  news:
+    - "Reminder: schools and state offices in {region} are closed on {day} for {why}."
+    - "{why} on {day}: most offices in {zone} closed, public transport on a Sunday schedule."
+    - "Parents in {region}: no school on {day} ({why})."
+  social:
+    - "day off for {why} lets gooo, {zone_short} offices are empty"
+echo:
+  social:
+    - "anyone working on {day}? everything's closed for {why}"
+whys: ["a regional holiday", "a teacher in-service day", "the regional founders' day holiday"]

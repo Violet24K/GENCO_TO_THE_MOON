@@ -1,0 +1,20 @@
+# Slots: zone, zone_short, region, window, mw, mw_lo, mw_hi, gust, line_clause
+clean:
+  weather:
+    - "Wind forecast for {zone}: strong winds from {window}, wind farm output about {mw} MW above the day-ahead forecast (likely range {mw_lo}-{mw_hi} MW).{line_clause}"
+    - "Weather service: a windy front over {region} from {window}. Wind generation in {zone_short} should exceed forecast by roughly {mw} MW ({mw_lo}-{mw_hi} MW).{line_clause}"
+hedged:
+  weather:
+    - "Breezy to windy over {region} from {window}; wind farms in {zone_short} could produce a few hundred MW more than planned.{line_clause}"
+    - "Strong winds expected in {zone_short} from {window}, gusts near {gust} km/h; wind output likely well above forecast.{line_clause}"
+echo:
+  news:
+    - "Wind turbines in {region} expected to spin hard from {window}, analysts say."
+  social:
+    - "so windy in {zone_short} rn, turbines must be maxed out"
+line_clause:
+  clean: " Gusts near {gust} km/h may trip lines {gust_lines} (about {line_pct}% per line per hour)."
+  hedged: " Gusts could knock out lines {gust_lines}."
+contradiction:
+  social:
+    - "wind already dying down in {zone_short}, forecast is wrong"

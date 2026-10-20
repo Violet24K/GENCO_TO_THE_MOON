@@ -1,0 +1,21 @@
+{
+ "gas": "mf_dc",
+ "heat": "mf_genco",
+ "none": "mf_dc",
+ "outage": "mf_dc",
+ "storm": "mf_dc",
+ "_meta": {
+  "source": [
+   "exp2_regret_heatv4.parquet",
+   "exp2_regret_heatv4_hs.parquet"
+  ],
+  "budget_s": 2.0,
+  "n_states": {
+   "gas": 14,
+   "heat": 17,
+   "none": 19,
+   "outage": 10,
+   "storm": 10
+  }
+ }
+}

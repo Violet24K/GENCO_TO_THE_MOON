@@ -1,0 +1,32 @@
+# Slots: zone, window, pct (L1), hedge (L2 probability phrase), gust
+clean:
+  weather:
+    - "Thunderstorm forecast for {zone}: {pct}% chance of storms from {window}, gusts to {gust} km/h. Overhead lines in the area are exposed to lightning and wind damage."
+    - "Weather service: {pct}% probability of severe thunderstorms over {zone} from {window}; gusts up to {gust} km/h."
+    - "Storm outlook: thunderstorms with {pct}% probability in {zone}, {window}. Damaging gusts near {gust} km/h possible."
+hedged:
+  weather:
+    - "{hedge_cap} thunderstorms over {zone} from {window}; gusts could reach {gust} km/h."
+    - "Forecast for {zone}, {window}: {hedge} storms, some possibly severe with lightning."
+    - "Unsettled weather: {hedge} thunderstorms in {region} from {window}."
+echo:
+  news:
+    - "Storms may roll through {region} from {window}, forecasters say."
+    - "Severe weather watch talk for {zone} from {window}."
+  social:
+    - "sky looking nasty over {region}, storms from {window}?"
+    - "radar lighting up near {zone_short}, could knock out some lines"
+
+update:   # L3 forecast path; direction = upgraded | downgraded
+  revised:
+    weather:
+      - "Forecast update for {zone}: storm chances {direction} to {pct}% for {window}."
+      - "Updated outlook ({direction}): {hedge} thunderstorms over {zone} from {window}."
+      - "Storm risk for {zone_short} {direction}: now {pct}% chance from {window}."
+contradiction:        # used when the storm does hit
+  social:
+    - "radar looks totally clear over {region}, no storms coming"
+    - "storms will miss {zone_short} completely, forecasters always overhype"
+contradiction_miss:   # used when the storm does not hit
+  social:
+    - "massive storm about to wreck {zone_short} lines, 100% happening"

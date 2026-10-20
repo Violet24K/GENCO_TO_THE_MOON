@@ -1,0 +1,17 @@
+# Slots: window, scale, pct, tx_pct, n_tx, hedge, hedge_cap
+clean:
+  weather:
+    - "Space weather watch: a {scale} geomagnetic storm is expected from {window}. There is a {pct}% chance of geomagnetically induced currents strong enough to trip transformers; if that happens, about {tx_pct}% of the system's {n_tx} large transformers could trip together."
+    - "NOAA-style alert: {scale} storm conditions from {window}. Probability of transformer-damaging currents: {pct}%. If they occur, roughly {tx_pct}% of large transformers may go out at once."
+hedged:
+  weather:
+    - "Space weather watch ({scale}) from {window}: {hedge} geomagnetic disturbances that could trip some large transformers."
+    - "A coronal mass ejection may reach Earth around {window}; grid operators prepare for possible transformer trips."
+echo:
+  news:
+    - "Northern lights may be visible tonight as a solar storm arrives around {window}."
+  social:
+    - "aurora forecast for tonight!! {scale} storm apparently"
+contradiction:
+  social:
+    - "solar storms never actually do anything to the grid, ignore it"

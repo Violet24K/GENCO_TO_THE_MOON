@@ -1,0 +1,30 @@
+# Slots: zone, zone_short, region, window, lines, n; update: old_window, added
+clean:
+  iso:
+    - "Public safety power shutoff: to reduce wildfire risk, lines {lines} ({zone_short}) will be de-energized from {window}."
+    - "ISO notice: the utility will de-energize {n} lines in {zone} ({lines}) from {window} because of extreme fire weather."
+hedged:
+  iso:
+    - "Fire weather shutoff planned in {zone_short}: lines {lines} to be switched off from {window}."
+    - "Wildfire precaution: {n} transmission lines in {region} ({lines}) will be taken out of service from {window}."
+echo:
+  news:
+    - "Red flag warning in {region}; utility plans preventive power shutoffs from {window}."
+    - "Wildfire danger prompts planned shutoffs of power lines in {region} from {window}."
+  social:
+    - "they're cutting power lines in {zone_short} again because of the fire risk, {window}"
+update:
+  cancelled:
+    iso:
+      - "CANCELLED: winds have eased; the public safety shutoff of lines {lines} ({old_window}) will not take place."
+      - "ISO withdraws the shutoff notice for {zone_short} ({old_window}); all lines stay energized."
+  expanded:
+    iso:
+      - "UPDATE: the public safety shutoff in {zone_short} is expanded; line {added} will also be de-energized. Lines now affected: {lines}, from {window}."
+      - "Revised shutoff scope: {added} added to the de-energization list ({lines}) for {window}."
+  extended:
+    iso:
+      - "UPDATE: fire weather persists; lines {lines} stay de-energized longer, now from {window}."
+contradiction:
+  social:
+    - "heard the shutoff in {zone_short} got called off, lines are staying on"

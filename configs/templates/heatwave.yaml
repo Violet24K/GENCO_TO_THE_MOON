@@ -1,0 +1,51 @@
+# Slots: zone, window, temp_hi, anom, load_lo, load_hi, pct (L1), conf (L2 confidence verb)
+clean:   # L1: one clean message from the primary source, explicit numbers
+  weather:
+    - "Heat advisory for {zone}: highs near {temp_hi} C from {window}, about {anom} C above normal. System demand in the area is forecast {load_lo}-{load_hi}% above normal."
+    - "Excessive heat forecast: {zone} will see temperatures peaking around {temp_hi} C ({anom} C above seasonal normal) from {window}. Expected load uplift: {load_lo}-{load_hi}% over a normal day."
+    - "Weather service: a heat wave affects {zone} from {window}. Peak temperature {temp_hi} C, {anom} C above normal; demand {load_lo}-{load_hi}% higher than usual."
+hedged:  # L2 primary message
+  weather:
+    - "Heat building over {zone} from {window}; highs {conf} reach about {temp_hi} C. Demand {conf} run {load_lo}-{load_hi}% above normal."
+    - "Hot spell for {zone} from {window}: temperatures {conf} top out near {temp_hi} C, a few degrees above normal. Grid demand {conf} climb {load_lo}-{load_hi}% above a typical day."
+    - "Outlook for {zone}: unusually warm from {window}, peak near {temp_hi} C. Forecasters say air-conditioning load {conf} add {load_lo}-{load_hi}%."
+echo:
+  news:
+    - "Residents of {region} brace for heat from {window}; utilities warn power use could rise around {load_mid}%."
+    - "Heat wave headlines: {zone} expected to swelter near {temp_hi} C from {window}."
+    - "Cooling centers open in {region} as temperatures approach {temp_hi} C from {window}."
+  social:
+    - "it's gonna be brutal in {region} later, phone says {temp_hi} C. ACs will be maxed out"
+    - "Heat dome over {zone}?? demand going to spike like {load_mid}% easy"
+    - "anyone else's grid app showing a heat alert for {zone} from {window}?"
+
+update:
+  revised:
+    weather:
+      - "Forecast update for {zone}: highs now near {temp_hi} C for {window}; demand {load_lo}-{load_hi}% above normal."
+      - "Revised heat outlook for {zone_short}, {window}: peak around {temp_hi} C, load {load_lo}-{load_hi}% over normal."
+contradiction:
+  social:
+    - "the heat wave thing for {zone_short} is overblown, it'll be a normal day"
+# ISO advisory on the discrete heat risks (unit trips, line sag trips, shared load-forecast error).
+# Slots: zone, window, unit_pct, unit_pct_r, line_clause, sigma_pct, sigma_r, temp_sd
+advisory:
+  clean:   # L1: explicit numbers (what perception extracts)
+    iso:
+      - "ISO weather watch for {zone} from {window}: elevated forced-outage risk for generating units, about {unit_pct}% per unit per hour at the peak.{line_clause} System-wide load forecast uncertainty is about ±{sigma_pct}% (1 sigma, shared by all zones; temperature forecast ±{temp_sd} C)."
+      - "ISO hot weather alert ({zone_short}, from {window}): unit trip risk about {unit_pct}% per unit per hour.{line_clause} Load forecast error across all zones: ±{sigma_pct}% (1 sigma), from a ±{temp_sd} C temperature uncertainty."
+      - "ISO operations advisory for {zone} from {window}: generators face about {unit_pct}% per unit per hour forced-outage risk in the heat.{line_clause} The system-wide load forecast carries ±{sigma_pct}% (1 sigma) uncertainty (±{temp_sd} C on temperature)."
+  hedged:  # L2
+    iso:
+      - "ISO hot weather alert for {zone} from {window}: units may trip more often than usual in the heat, a few percent per hour.{line_clause} Load forecasts are less certain than normal, roughly ±{sigma_r}%."
+      - "ISO weather watch ({zone_short}, from {window}): elevated risk of generator trips (around {unit_pct_r}% per unit per hour).{line_clause} Expect wider-than-usual load forecast errors."
+      - "ISO advisory for {zone} from {window}: heat raises the chance of forced outages at generating units.{line_clause} System load could deviate from forecast by several percent."
+  indirect:  # L3: no numbers on risk
+    iso:
+      - "ISO issues a conservative operations notice for {zone} from {window}: generators are asked to defer planned maintenance and keep units fully staffed.{line_clause}"
+      - "Record temperatures forecast; the ISO asks generators in {zone_short} to postpone non-essential maintenance from {window}.{line_clause}"
+      - "ISO declares a weather watch for {zone} from {window} and urges participants to review forced-outage contingency plans.{line_clause}"
+line_clause:
+  clean: " Heavily loaded lines {lines} may trip on conductor sag (about {line_pct}% per line per hour)."
+  hedged: " Heavily loaded lines {lines} could trip on sag."
+  indirect: " Transmission crews will patrol lines {lines}."
